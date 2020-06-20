@@ -29,14 +29,11 @@ from collectd_rabbitmq import utils
 
 CONFIGS = []
 INSTANCES = []
-NODEID = socket.gethostname()
-NODENAME = socket.getfqdn()
 
 def configure(config_values):
     """
     Converts a collectd configuration into rabbitmq configuration.
     """
-
     collectd.debug('Configuring RabbitMQ Plugin')
     data_to_ignore = dict()
     scheme = 'http'
@@ -73,7 +70,7 @@ def configure(config_values):
     auth = utils.Auth(username, password, realm)
     conn = utils.ConnectionInfo(host, port, scheme,
                                 validate_certs=validate_certs)
-    config = utils.Config(auth, conn, data_to_ignore, vhost_prefix)
+    config = utils.Config(auth, conn, data_to_ignore, vhost_prefix, host)
     CONFIGS.append(config)
 
 
@@ -179,13 +176,11 @@ class CollectdPlugin(object):
         """
         Sends message stats to collectd.
         """
-	global NODENAME
         if not data:
             collectd.debug("No data for %s in vhost %s" % (plugin, vhost))
             return
-
         vhost = self.generate_vhost_name(vhost)
-	vhost = vhost + '@' + NODENAME
+	vhost = vhost + '@' + self.config.fqdn
 
         for name in self.message_stats:
             if 'message_stats' not in data:
@@ -200,7 +195,7 @@ class CollectdPlugin(object):
             if not details:
                 continue
             for detail in self.message_details:
-		
+
                 self.dispatch_values(
                     (details.get(detail, 0)), vhost, plugin, plugin_instance,
                     "%s_details" % name, detail)
@@ -276,13 +271,12 @@ class CollectdPlugin(object):
         """
         Sends queue stats to collectd.
         """
-	global NODENAME
         if not data:
             collectd.debug("No data for %s in vhost %s" % (plugin, vhost))
             return
 
         vhost = self.generate_vhost_name(vhost)
-	vhost = vhost + '@' + NODENAME
+	vhost = vhost + '@' + self.config.fqdn
 
         for name in self.queue_stats:
             if name not in data:
@@ -322,12 +316,10 @@ class CollectdPlugin(object):
         """
         Dispatches nodes memory stats.
         """
-	global NODENAME
-	global NODEID
 	value = 0
-	stats = self.rabbit.get_nodes_memory_stats(NODEID)
+	stats = self.rabbit.get_nodes_memory_stats(self.config.hostname)
 
-	collectd.debug("Dispatching memory data for {0}".format(NODEID))
+	collectd.debug("Dispatching memory data for {0}".format(self.config.hostname))
 
 	if stats is None:
             return None
@@ -339,8 +331,8 @@ class CollectdPlugin(object):
 				value = stats.get('memory', {}).get(subtree_name, {}).get(stat_name, 0)
 
 			self.dispatch_values(value,
-                        	NODENAME, 'nodememory', subtree_name , stat_name)
-				
+                        	self.config.fqdn, 'nodememory', subtree_name , stat_name)
+
     # pylint: disable=R0913
     @staticmethod
     def dispatch_values(values, host, plugin, plugin_instance,
