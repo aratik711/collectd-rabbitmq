@@ -275,6 +275,8 @@ TypesDB "/usr/share/collectd/types.db"
     </Module>
 </Plugin>
 ```
+Host is a required parameter, along with username/password and port.
+
 6. Create a monitoring user and give it login rights to all the vhosts.
 ```bash
 #!/bin/bash
