@@ -80,7 +80,7 @@ For each exchange in each vhost the following statistics are gathered: _NOTE_: T
 -   sockets_used
 
 #### Additionally I have modified the code to send the. following metrics as well.
-## Nodes
+## Queues
 - gc_num
 - gc_bytes_reclaimed
 - context_switches
@@ -171,3 +171,66 @@ For each exchange in each vhost the following statistics are gathered: _NOTE_: T
 	- rate
 - queue_deleted_details
 	- rate
+
+The above metrics will be sent in `queues_values` measurement.
+## Memory
+These metrics are pulled from the `/api/nodes/<NODENAME>/memory` api. 
+The raw respoonse from the above api is as:
+```json
+{
+   "memory":{
+      "connection_readers":69440,
+      "connection_writers":3264,
+      "connection_channels":11560,
+      "connection_other":492588,
+      "queue_procs":243852,
+      "queue_slave_procs":14480,
+      "plugins":3479384,
+      "other_proc":23210812,
+      "metrics":236636,
+      "mgmt_db":2121208,
+      "mnesia":152968,
+      "other_ets":3026016,
+      "binary":578656,
+      "msg_index":86848,
+      "code":24176580,
+      "atom":1180881,
+      "other_system":11801659,
+      "allocated_unused":11291216,
+      "reserved_unallocated":5120000,
+      "strategy":"rss",
+      "total":{
+         "erlang":70886832,
+         "rss":87298048,
+         "allocated":82178048
+      }
+   }
+}
+```
+The below metrics are sent:
+- default
+	- connection_readers
+	- connection_writers
+	- connection_channels
+	- connection_other
+	- queue_procs
+	- queue_slave_procs
+	- plugins
+	- other_proc
+	- metrics
+	- mgmt_db
+	- mnesia
+	- other_ets
+	- binary
+	- msg_index
+	- code
+	- atom
+	- other_system
+	- allocated_unused
+	- reserved_unallocated
+- total
+	- rss
+	- erlang
+	- allocated
+
+These metrics are sent to `nodememory_value` measurement.	
