@@ -183,9 +183,7 @@ class CollectdPlugin(object):
         if not data:
             collectd.debug("No data for %s in vhost %s" % (plugin, vhost))
             return
-	#if plugin == 'queues':
-        #    vhost = vhost.partition("rabbitmq_rabbit@")[2]
-	#else:
+
         vhost = self.generate_vhost_name(vhost)
 	vhost = vhost + '@' + NODENAME
 
