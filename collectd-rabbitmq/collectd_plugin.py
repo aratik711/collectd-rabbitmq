@@ -187,7 +187,6 @@ class CollectdPlugin(object):
         #    vhost = vhost.partition("rabbitmq_rabbit@")[2]
 	#else:
         vhost = self.generate_vhost_name(vhost)
-#	NODENAME = re.sub("-prd-clouddb[0-9]{3}", "", NODENAME)
 	vhost = vhost + '@' + NODENAME
 
         for name in self.message_stats:
