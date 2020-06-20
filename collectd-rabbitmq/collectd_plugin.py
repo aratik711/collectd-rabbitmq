@@ -317,9 +317,15 @@ class CollectdPlugin(object):
         Dispatches nodes memory stats.
         """
 	value = 0
-	stats = self.rabbit.get_nodes_memory_stats(self.config.hostname)
 
-	collectd.debug("Dispatching memory data for {0}".format(self.config.hostname))
+        hostname = self.config.hostname
+        if hostname is None or hostname == '':
+            collectd.debug("No hostname to retrieve memory data")
+            return
+
+	stats = self.rabbit.get_nodes_memory_stats(hostname)
+
+	collectd.debug("Dispatching memory data for {0}".format(hostname))
 
 	if stats is None:
             return None
