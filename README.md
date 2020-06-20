@@ -172,7 +172,7 @@ For each exchange in each vhost the following statistics are gathered: _NOTE_: T
 - queue_deleted_details
 	- rate
 
-The above metrics will be sent in `queues_value` measurement.
+The above metrics will be sent in `<node-name>_value` measurement.
 ## Memory
 These metrics are pulled from the `/api/nodes/<NODENAME>/memory` api. 
 The raw respoonse from the above api is as:
