@@ -79,7 +79,7 @@ For each exchange in each vhost the following statistics are gathered: _NOTE_: T
 -   sockets_total
 -   sockets_used
 
-#### Additionally I have modified the code to send the. following metrics as well.
+#### Additionally I have modified the code to send the following metrics as well.
 ## Queues
 - gc_num
 - gc_bytes_reclaimed
@@ -172,7 +172,7 @@ For each exchange in each vhost the following statistics are gathered: _NOTE_: T
 - queue_deleted_details
 	- rate
 
-The above metrics will be sent in `queues_values` measurement.
+The above metrics will be sent in `queues_value` measurement.
 ## Memory
 These metrics are pulled from the `/api/nodes/<NODENAME>/memory` api. 
 The raw respoonse from the above api is as:
@@ -233,4 +233,68 @@ The below metrics are sent:
 	- erlang
 	- allocated
 
-These metrics are sent to `nodememory_value` measurement.	
+These metrics are sent to `nodememory_value` measurement.	This will also contain the FQDN of the node in the `host` tag.
+
+The other changes made to the plugin are:
+ 1. In `queues_value` the value for `host` tag was the vhost name, I needed the value of the RMQ host to be added to this measurement as well, so the format of `host` has been changed to `vhost@hostname`.
+ So if the vhost was `/` and FQDN of the RMQ node was `rmq-test001.prod`, the host value would be `rabbitmq_default@rmq-test001.prod`
+
+### How to use:
+To use this code, please follow the below mentioned steps:
+1. Install `collectd`, ``libpython2.7``, ``libatlas3-base``. 
+2. Clone the repository
+``` 
+git clone git@github.com:aratik711/collectd-rabbitmq.git
+```
+3. Copy the directory collectd-rabbitmq/collectd-rabbitmq to the PYTHONPATH
+``` 
+cp -r collectd-rabbitmq/collectd-rabbitmq /usr/local/lib/python2.7/dist-packages
+```
+4. Copy the `rabbitmq.types.db` to `/usr/share/collectd/` with 644 read/write permissions.
+5. Add a collectd config for rabbitmq `/etc/collectd/collectd.conf.d/rabbitmq.conf` with 644 read/write permissions.
+```
+TypesDB "/usr/share/collectd/rabbitmq.types.db"
+TypesDB "/usr/share/collectd/types.db"
+<LoadPlugin "python">
+    Globals true
+</LoadPlugin>
+
+<Plugin "python">
+
+    LogTraces true
+    Interactive false
+    Import "collectd_rabbitmq.collectd_plugin"
+    <Module "collectd_rabbitmq.collectd_plugin">
+
+      Username "monuser"
+      Password "mypass"
+      Realm "RabbitMQ Management"
+      Host "rmq-test001.prod"
+      Port "15672"
+    </Module>
+</Plugin>
+```
+6. Create a monitoring user and give it login rights to all the vhosts.
+```bash
+#!/bin/bash
+rabbitmqctl add_user monuser mypass
+rabbitmqctl set_user_tags monuser monitoring
+for vhost in $(rabbitmqctl list_vhosts -q | grep -v name); do
+ echo $vhost
+ rabbitmqctl set_permissions -p $vhost "monuser" "" "" ""
+done
+```
+7. Restart collectd `service collectd restart`. The metrics should start coming in, in your data source.
+
+### Debugging
+In case you want to print the logs. You can add the following in `collectd.conf` file:
+```
+LoadPlugin logfile
+<Plugin logfile>
+        LogLevel info
+        File "/var/log/collectd.log"
+        Timestamp true
+        PrintSeverity true
+</Plugin>
+```
+Makesure it is added before any other Plugin entry. Restart the collectd service and logs should be streaming in.
