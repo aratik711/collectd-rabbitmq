@@ -235,6 +235,7 @@ The below metrics are sent:
 
 These metrics are sent to `nodememory_value` measurement.	This will also contain the FQDN of the node in the `host` tag.
 
+### Changes
 The other changes made to the plugin are:
  1. In `queues_value` the value for `host` tag was the vhost name, I needed the value of the RMQ host to be added to this measurement as well, so the format of `host` has been changed to `vhost@hostname`.
  So if the vhost was `/` and FQDN of the RMQ node was `rmq-test001.prod`, the host value would be `rabbitmq_default@rmq-test001.prod`
