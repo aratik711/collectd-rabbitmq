@@ -245,7 +245,7 @@ The other changes made to the plugin are:
 To use this code, please follow the below mentioned steps:
 1. Install `collectd`, ``libpython2.7``, ``libatlas3-base``. 
 2. You can either install the deb package or install by source.
-	* To install be deb, download the deb file at https://github.com/aratik711/collectd-rabbitmq/tree/master/debian, and innstall it using. `dpkg -i <filename>`
+	* To install be deb, download the deb file at https://github.com/aratik711/collectd-rabbitmq/tree/master/debian, and install it using. `dpkg -i <filename>`
 	* Install by source
 		a. Clone the repository
 
@@ -281,7 +281,7 @@ TypesDB "/usr/share/collectd/types.db"
 ```
 Host is a required parameter, along with username/password and port.
 
-6. Create a monitoring user and give it login rights to all the vhosts.
+4. Create a monitoring user and give it login rights to all the vhosts.
 ```bash
 #!/bin/bash
 rabbitmqctl add_user monuser mypass
@@ -291,7 +291,7 @@ for vhost in $(rabbitmqctl list_vhosts -q | grep -v name); do
  rabbitmqctl set_permissions -p $vhost "monuser" "" "" ""
 done
 ```
-7. Restart collectd `service collectd restart`. The metrics should start coming in, in your data source.
+5. Restart collectd `service collectd restart`. The metrics should start coming in, in your data source.
 
 ### Debugging
 In case you want to print the logs. You can add the following in `collectd.conf` file:
