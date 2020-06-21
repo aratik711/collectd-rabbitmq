@@ -245,16 +245,17 @@ The other changes made to the plugin are:
 To use this code, please follow the below mentioned steps:
 1. Install `collectd`, ``libpython2.7``, ``libatlas3-base``. 
 2. You can either install the deb package or install by source.
-2.a To install be deb, download the deb file at https://github.com/aratik711/collectd-rabbitmq/tree/master/debian, and innstall it using. `dpkg -i <filename>`
-2.b.1 Clone the repository
-``` 
-git clone git@github.com:aratik711/collectd-rabbitmq.git
-```
-2.b.2. Copy the directory collectd-rabbitmq/collectd-rabbitmq to the PYTHONPATH
-``` 
-cp -r collectd-rabbitmq/collectd-rabbitmq /usr/local/lib/python2.7/dist-packages
-```
-2.b.3. Copy the `config/rabbitmq.types.db` to `/usr/share/collectd/` with 644 read/write permissions.
+	* To install be deb, download the deb file at https://github.com/aratik711/collectd-rabbitmq/tree/master/debian, and innstall it using. `dpkg -i <filename>`
+	* Install by source
+		a. Clone the repository
+
+		> git clone git@github.com:aratik711/collectd-rabbitmq.git<br/>
+
+	   b. Copy the directory collectd-rabbitmq/collectd-rabbitmq to the PYTHONPATH
+
+		> cp -r collectd-rabbitmq/collectd-rabbitmq /usr/local/lib/python2.7/dist-packages
+
+		c. Copy the `config/rabbitmq.types.db` to `/usr/share/collectd/` with 644 read/write permissions.
 3. Add a collectd config for rabbitmq `/etc/collectd/collectd.conf.d/rabbitmq.conf` with 644 read/write permissions.
 ```
 TypesDB "/usr/share/collectd/rabbitmq.types.db"
