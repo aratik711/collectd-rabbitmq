@@ -251,7 +251,7 @@ To use this code, please follow the below mentioned steps:
 
 		> git clone git@github.com:aratik711/collectd-rabbitmq.git<br/>
 
-	   b. Copy the directory collectd-rabbitmq/collectd_rabbitmq to the PYTHONPATH
+	   	b. Copy the directory collectd-rabbitmq/collectd_rabbitmq to the PYTHONPATH
 
 		> cp -r collectd-rabbitmq/collectd_rabbitmq /usr/local/lib/python2.7/dist-packages
 
